@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#070b16">
+<meta name="description" content="Modelo 3D interativo de celular — toque e veja as partes acesas.">
+<title>Celular 3D · Toque Interativo</title>
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+
+<div id="app">
+
+  <header>
+    <div>
+      <h1>Celular 3D</h1>
+      <p id="subtitle">Toque no modelo · arraste para girar</p>
+    </div>
+    <button id="btn-settings" class="icon-btn" aria-label="Abrir configurações" aria-expanded="false">⚙</button>
+  </header>
+
+  <main id="stage">
+    <canvas id="scene"></canvas>
+    <div id="hint">Toque em qualquer parte do celular</div>
+  </main>
+
+  <footer id="stats">
+    <div class="stat">
+      <span class="label">Toques</span>
+      <span class="value" id="stat-touches">0 / 0</span>
+    </div>
+    <div class="stat">
+      <span class="label">FPS</span>
+      <span class="value" id="stat-fps">—</span>
+    </div>
+    <div class="stat">
+      <span class="label">Área acesa</span>
+      <span class="value" id="stat-area">0.0%</span>
+    </div>
+    <div class="stat">
+      <span class="label">Região</span>
+      <span class="value" id="stat-region">—</span>
+    </div>
+    <div class="bar"><i id="stat-bar"></i></div>
+  </footer>
+
+</div>
+
+<aside id="panel" aria-hidden="true">
+  <div class="panel-head">
+    <h2>Configurações</h2>
+    <button id="btn-close" class="icon-btn" aria-label="Fechar">✕</button>
+  </div>
+
+  <section class="group">
+    <h3>Cores</h3>
+    <div class="row">
+      <label for="cfg-base">Cor base (resto)</label>
+      <input type="color" id="cfg-base" value="#8ec9ff">
+    </div>
+    <div class="row">
+      <label for="cfg-touch">Cor do toque</label>
+      <input type="color" id="cfg-touch" value="#ff2f3d">
+    </div>
+  </section>
+
+  <section class="group">
+    <h3>Comportamento</h3>
+
+    <div class="row">
+      <label for="cfg-radius">Raio do toque</label>
+      <span class="val" id="val-radius">0.45</span>
+    </div>
+    <input type="range" id="cfg-radius" min="0.12" max="1.20" step="0.01" value="0.45">
+
+    <div class="row">
+      <label for="cfg-decay">Permanência</label>
+      <span class="val" id="val-decay">0.90</span>
+    </div>
+    <input type="range" id="cfg-decay" min="0.60" max="0.99" step="0.01" value="0.90">
+
+    <div class="row">
+      <label for="cfg-zw">Foco na face</label>
+      <span class="val" id="val-zw">2.6</span>
+    </div>
+    <input type="range" id="cfg-zw" min="1.0" max="6.0" step="0.1" value="2.6">
+  </section>
+
+  <section class="group">
+    <h3>Rotação</h3>
+    <div class="row">
+      <label for="cfg-autorotate">Auto-rotação</label>
+      <input type="checkbox" id="cfg-autorotate" class="switch" checked>
+    </div>
+    <div class="row">
+      <label for="cfg-speed">Velocidade</label>
+      <span class="val" id="val-speed">0.8</span>
+    </div>
+    <input type="range" id="cfg-speed" min="0" max="4" step="0.1" value="0.8">
+  </section>
+
+  <section class="group">
+    <h3>Material</h3>
+    <div class="row">
+      <label for="cfg-metal">Metalicidade</label>
+      <span class="val" id="val-metal">0.18</span>
+    </div>
+    <input type="range" id="cfg-metal" min="0" max="1" step="0.01" value="0.18">
+
+    <div class="row">
+      <label for="cfg-rough">Rugosidade</label>
+      <span class="val" id="val-rough">0.42</span>
+    </div>
+    <input type="range" id="cfg-rough" min="0" max="1" step="0.01" value="0.42">
+  </section>
+
+  <section class="group actions">
+    <button id="cfg-reset" class="btn">Restaurar padrões</button>
+    <button id="cfg-cam" class="btn ghost">Recentralizar câmera</button>
+  </section>
+</aside>
+
+<script type="module" src="script.js"></script>
+</body>
+        </html>
