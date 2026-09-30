@@ -2,133 +2,217 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#070b16">
-<meta name="description" content="Modelo 3D interativo de celular — toque e veja as partes acesas.">
-<title>Celular 3D · Toque Interativo</title>
-<link rel="stylesheet" href="style.css">
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-  }
-}
-</script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Luraph Deobfuscator — Análise & Setup</title>
+<meta name="description" content="Analise scripts Luraph, gere o comando de desobfuscação e rode em GitHub Codespaces com um clique.">
+<meta name="theme-color" content="#0a0e14">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23a371f7'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='%230a0e14' font-family='monospace' font-weight='700'%3EL%3C/text%3E%3C/svg%3E">
 </head>
 <body>
 
-<div id="app">
-
-  <header>
-    <div>
-      <h1>Celular 3D</h1>
-      <p id="subtitle">Toque no modelo · arraste para girar</p>
-    </div>
-    <button id="btn-settings" class="icon-btn" aria-label="Abrir configurações" aria-expanded="false">⚙</button>
-  </header>
-
-  <main id="stage">
-    <canvas id="scene"></canvas>
-    <div id="hint">Toque em qualquer parte do celular</div>
-  </main>
-
-  <footer id="stats">
-    <div class="stat">
-      <span class="label">Toques</span>
-      <span class="value" id="stat-touches">0 / 0</span>
-    </div>
-    <div class="stat">
-      <span class="label">FPS</span>
-      <span class="value" id="stat-fps">—</span>
-    </div>
-    <div class="stat">
-      <span class="label">Área acesa</span>
-      <span class="value" id="stat-area">0.0%</span>
-    </div>
-    <div class="stat">
-      <span class="label">Região</span>
-      <span class="value" id="stat-region">—</span>
-    </div>
-    <div class="bar"><i id="stat-bar"></i></div>
-  </footer>
-
-</div>
-
-<aside id="panel" aria-hidden="true">
-  <div class="panel-head">
-    <h2>Configurações</h2>
-    <button id="btn-close" class="icon-btn" aria-label="Fechar">✕</button>
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="brand" href="#top">
+      <span class="brand-mark">L</span>
+      <span class="brand-text">Luraph <em>Deobf</em></span>
+    </a>
+    <nav class="nav">
+      <a href="#analisar">Analisar</a>
+      <a href="#opcoes">Opções</a>
+      <a href="#como-usar">Como usar</a>
+      <a id="repo-link" class="gh" href="#" target="_blank" rel="noopener">GitHub ↗</a>
+    </nav>
   </div>
+</header>
 
-  <section class="group">
-    <h3>Cores</h3>
-    <div class="row">
-      <label for="cfg-base">Cor base (resto)</label>
-      <input type="color" id="cfg-base" value="#8ec9ff">
-    </div>
-    <div class="row">
-      <label for="cfg-touch">Cor do toque</label>
-      <input type="color" id="cfg-touch" value="#ff2f3d">
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="container">
+      <span class="badge">100% no navegador · nada é enviado</span>
+      <h1>Desobfusque scripts <span class="accent">Luraph</span><br>direto do GitHub.</h1>
+      <p class="lede">
+        Solte o arquivo aqui, receba a análise e o comando pronto. Depois rode em
+        um Codespace com um clique — sem instalar Python, sem clonar nada na sua máquina.
+      </p>
+      <div class="hero-cta">
+        <a class="btn primary" href="#analisar">Analisar script</a>
+        <a id="codespaces-link" class="btn ghost" href="#" target="_blank" rel="noopener">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M7.976 0a.75.75 0 0 1 .75.75v6.476h6.524a.75.75 0 0 1 0 1.5H8.726v6.524a.75.75 0 0 1-1.5 0V8.726H.75a.75.75 0 0 1 0-1.5h6.476V.75A.75.75 0 0 1 7.976 0Z"/></svg>
+          Abrir no Codespaces
+        </a>
+      </div>
+      <ul class="hero-feats">
+        <li>Detecção automática de ofuscador</li>
+        <li>Harness offline (sem Studio)</li>
+        <li>Passe de nomes &nbsp;·&nbsp; folding &nbsp;·&nbsp; spacing</li>
+      </ul>
     </div>
   </section>
 
-  <section class="group">
-    <h3>Comportamento</h3>
+  <!-- DROPZONE -->
+  <section id="analisar" class="panel">
+    <div class="container">
+      <div class="dropzone" id="drop" tabindex="0" role="button" aria-label="Enviar arquivo">
+        <input type="file" id="file" hidden accept=".lua,.luau,.txt,.json">
+        <svg class="dropzone-icon" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <p class="dropzone-title">
+          <strong>Arraste o script aqui</strong> ou
+          <button type="button" class="link" id="pick">escolha um arquivo</button>
+        </p>
+        <p class="dropzone-sub">.lua · .luau · .txt — a análise é 100% local</p>
+      </div>
 
-    <div class="row">
-      <label for="cfg-radius">Raio do toque</label>
-      <span class="val" id="val-radius">0.45</span>
-    </div>
-    <input type="range" id="cfg-radius" min="0.12" max="1.20" step="0.01" value="0.45">
+      <!-- analysis -->
+      <div class="analysis" id="analysis" hidden>
+        <div class="analysis-header">
+          <div class="file-meta">
+            <div class="file-name" id="file-name">—</div>
+            <div class="file-sub" id="file-sub">—</div>
+          </div>
+          <button class="btn small" id="reset" type="button">Trocar arquivo</button>
+        </div>
 
-    <div class="row">
-      <label for="cfg-decay">Permanência</label>
-      <span class="val" id="val-decay">0.90</span>
-    </div>
-    <input type="range" id="cfg-decay" min="0.60" max="0.99" step="0.01" value="0.90">
+        <div class="stats">
+          <div class="stat"><span class="stat-num" id="stat-size">—</span><span class="stat-lbl">tamanho</span></div>
+          <div class="stat"><span class="stat-num" id="stat-lines">—</span><span class="stat-lbl">linhas</span></div>
+          <div class="stat"><span class="stat-num" id="stat-maxline">—</span><span class="stat-lbl">maior linha</span></div>
+          <div class="stat"><span class="stat-num" id="stat-conf">—</span><span class="stat-lbl">confiança</span></div>
+        </div>
 
-    <div class="row">
-      <label for="cfg-zw">Foco na face</label>
-      <span class="val" id="val-zw">2.6</span>
+        <div class="detect" id="detect">
+          <span class="pill" id="detect-pill">Analisando…</span>
+          <ul class="signals" id="signals"></ul>
+        </div>
+      </div>
     </div>
-    <input type="range" id="cfg-zw" min="1.0" max="6.0" step="0.1" value="2.6">
   </section>
 
-  <section class="group">
-    <h3>Rotação</h3>
-    <div class="row">
-      <label for="cfg-autorotate">Auto-rotação</label>
-      <input type="checkbox" id="cfg-autorotate" class="switch" checked>
+  <!-- OPTIONS -->
+  <section id="opcoes" class="panel alt">
+    <div class="container">
+      <h2>Opções</h2>
+      <p class="section-sub">Refletem as flags do <code>deob.py</code>. Deixe como está se não souber.</p>
+
+      <div class="options-grid">
+
+        <label class="opt">
+          <span class="opt-lbl">Ofuscador</span>
+          <select id="opt-obfuscator">
+            <option value="auto">auto (detectar)</option>
+            <option value="luraph_v15">luraph_v15</option>
+            <option value="luraph_v14">luraph_v14</option>
+          </select>
+        </label>
+
+        <label class="opt">
+          <span class="opt-lbl">Executor</span>
+          <input type="text" id="opt-executor" value="Wave" spellcheck="false">
+        </label>
+
+        <label class="opt">
+          <span class="opt-lbl">Timeout (s)</span>
+          <input type="number" id="opt-timeout" value="90" min="5" max="3600">
+        </label>
+
+        <label class="opt">
+          <span class="opt-lbl">Budget (s)</span>
+          <input type="number" id="opt-budget" value="30" min="1" max="3600">
+        </label>
+
+        <label class="opt span-2">
+          <span class="opt-lbl">Input Text (para TextBox)</span>
+          <input type="text" id="opt-input-text" placeholder="opcional — ex: código de key" spellcheck="false">
+        </label>
+
+      </div>
+
+      <div class="checks">
+        <label class="check"><input type="checkbox" id="opt-strings"><span>Dump de strings <code>--strings</code></span></label>
+        <label class="check"><input type="checkbox" id="opt-debug"><span>Modo debug <code>--debug</code></span></label>
+        <label class="check"><input type="checkbox" id="opt-no-tidy"><span>Não enfeitar <code>--no-tidy</code></span></label>
+        <label class="check"><input type="checkbox" id="opt-no-fold"><span>Não dobrar loops/helpers <code>--no-fold</code></span></label>
+        <label class="check"><input type="checkbox" id="opt-keep-preamble"><span>Manter preâmbulo <code>--keep-preamble</code></span></label>
+        <label class="check"><input type="checkbox" id="opt-no-pypy"><span>Nunca usar PyPy <code>--no-pypy</code></span></label>
+      </div>
     </div>
-    <div class="row">
-      <label for="cfg-speed">Velocidade</label>
-      <span class="val" id="val-speed">0.8</span>
-    </div>
-    <input type="range" id="cfg-speed" min="0" max="4" step="0.1" value="0.8">
   </section>
 
-  <section class="group">
-    <h3>Material</h3>
-    <div class="row">
-      <label for="cfg-metal">Metalicidade</label>
-      <span class="val" id="val-metal">0.18</span>
+  <!-- COMMAND -->
+  <section id="comando" class="panel" hidden>
+    <div class="container">
+      <div class="cmd-head">
+        <h2>Comando gerado</h2>
+        <button class="btn primary small" id="copy" type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Copiar
+        </button>
+      </div>
+      <pre class="codeblock"><code id="cmd">—</code></pre>
+      <p class="cmd-note">
+        Rode este comando dentro do repositório clonado (ou no Codespace) na mesma pasta do <code>deob.py</code>.
+        O resultado aparece em <code>output/</code>.
+      </p>
     </div>
-    <input type="range" id="cfg-metal" min="0" max="1" step="0.01" value="0.18">
-
-    <div class="row">
-      <label for="cfg-rough">Rugosidade</label>
-      <span class="val" id="val-rough">0.42</span>
-    </div>
-    <input type="range" id="cfg-rough" min="0" max="1" step="0.01" value="0.42">
   </section>
 
-  <section class="group actions">
-    <button id="cfg-reset" class="btn">Restaurar padrões</button>
-    <button id="cfg-cam" class="btn ghost">Recentralizar câmera</button>
-  </section>
-</aside>
+  <!-- HOW TO -->
+  <section id="como-usar" class="panel alt">
+    <div class="container">
+      <h2>Como usar</h2>
+      <ol class="steps">
+        <li>
+          <span class="step-n">1</span>
+          <div>
+            <strong>Abra um Codespace</strong>
+            <p>Clique em <a id="codespaces-link-2" href="#" target="_blank" rel="noopener">Abrir no Codespaces</a>. O GitHub cria um ambiente Linux na nuvem com o repositório pronto.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">2</span>
+          <div>
+            <strong>Solte seu arquivo no Codespace</strong>
+            <p>Arraste o script para a árvore de arquivos (ou use <code>Upload…</code> no menu). Coloque na raiz do projeto.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">3</span>
+          <div>
+            <strong>Rode o comando gerado acima</strong>
+            <p>Cole no terminal do Codespace. O <code>deob.py</code> baixa o runtime Luau, executa o script em ambiente simulado e devolve o resultado.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-n">4</span>
+          <div>
+            <strong>Baixe o resultado</strong>
+            <p>O arquivo final fica em <code>output/&lt;nome-do-script&gt;</code>. Clique com o botão direito → <em>Download</em>.</p>
+          </div>
+        </li>
+      </ol>
 
-<script type="module" src="script.js"></script>
+      <div class="callout">
+        <strong>Prefere rodar local?</strong>
+        <p>Clone o repositório, instale Python 3.10+, e rode <code>python deobf/build_luau.py</code> uma vez para baixar/compilar o runtime. Depois é só <code>python deob.py seu_script.luau</code>.</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <p>Feito para uso educacional e pesquisa. Respeite os termos de uso dos scripts que analisar.</p>
+    <p class="muted">Sem servidor · sem telemetria · roda inteiramente no seu navegador + GitHub.</p>
+  </div>
+</footer>
+
+<script src="app.js"></script>
 </body>
-        </html>
+</html>
